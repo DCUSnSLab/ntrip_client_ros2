@@ -97,7 +97,7 @@ class NTRIPRosBase(Node):
       self.get_logger().error('Unable to connect')
       return False
     # Setup our subscribers
-    self._nmea_sub = self.create_subscription(Sentence, 'nmea', self.subscribe_nmea, 10)
+    self._nmea_sub = self.create_subscription(Sentence, '/ntrip_nmea', self.subscribe_nmea, 10)
     self._fix_sub = self.create_subscription(NavSatFix, 'fix', self.subscribe_fix, 10)
 
     # Start the timer that will check for RTCM data
