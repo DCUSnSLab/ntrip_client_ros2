@@ -10,10 +10,10 @@ class NMEAPublisher(Node):
         
         # 발행자 설정
         self.publisher_ = self.create_publisher(Sentence, '/ntrip_nmea', 10)
-        
-        # 타이머 설정 (1Hz)
-        timer_period = 1.0  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+
+        # 타이머 설정 (10   Hz)
+        self.timer_period = 0.1  # seconds
+        self.timer = self.create_timer(self.timer_period, self.timer_callback)
         
         self.get_logger().info('NMEA Publisher Node has been started')
     
@@ -34,7 +34,7 @@ class NMEAPublisher(Node):
         
         # 메시지 발행
         self.publisher_.publish(nmea_sentence)
-        self.get_logger().info(f'Published NMEA Sentence: {nmea_sentence.sentence.strip()}')
+        self.get_logger().info(f'Published NMEA Sentence: {self.timer_period}')
 
 def main(args=None):
     rclpy.init(args=args)
