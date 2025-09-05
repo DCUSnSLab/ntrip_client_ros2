@@ -34,7 +34,7 @@ class NMEAPublisher(Node):
         
         # 메시지 발행
         self.publisher_.publish(nmea_sentence)
-        self.get_logger().info(f'Published NMEA Sentence: {nmea_sentence.sentence.strip()}')
+        # self.get_logger().info(f'Published NMEA Sentence: {nmea_sentence.sentence.strip()}')
 
 def main(args=None):
     rclpy.init(args=args)
