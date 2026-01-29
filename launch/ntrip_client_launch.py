@@ -83,5 +83,10 @@ def generate_launch_description():
                 #remappings=[
                 #  ("nmea", "/gx5/nmea/sentence")
                 #],
+          ),
+
+          Node(
+                package='ntrip_client',
+                executable='nmea_init_pub.py'
           )
       ])
