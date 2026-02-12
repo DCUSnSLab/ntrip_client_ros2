@@ -10,13 +10,13 @@ def generate_launch_description():
           DeclareLaunchArgument('namespace',             default_value='/'),
           DeclareLaunchArgument('node_name',             default_value='ntrip_client'),
           DeclareLaunchArgument('debug',                 default_value='false'),
-          DeclareLaunchArgument('host',                  default_value='20.185.11.35'),
+          DeclareLaunchArgument('host',                  default_value='rts2.ngii.go.kr'),
           DeclareLaunchArgument('port',                  default_value='2101'),
-          DeclareLaunchArgument('mountpoint',            default_value='VRS_RTCM3'),
+          DeclareLaunchArgument('mountpoint',            default_value='VRS_RTCM32'),
           DeclareLaunchArgument('ntrip_version',         default_value='None'),
           DeclareLaunchArgument('authenticate',          default_value='True'),
-          DeclareLaunchArgument('username',              default_value='user'),
-          DeclareLaunchArgument('password',              default_value='pass'),
+          DeclareLaunchArgument('username',              default_value='junhp1234'),
+          DeclareLaunchArgument('password',              default_value='ngii'),
           DeclareLaunchArgument('ssl',                   default_value='False'),
           DeclareLaunchArgument('cert',                  default_value='None'),
           DeclareLaunchArgument('key',                   default_value='None'),
@@ -83,5 +83,10 @@ def generate_launch_description():
                 #remappings=[
                 #  ("nmea", "/gx5/nmea/sentence")
                 #],
+          ),
+
+          Node(
+                package='ntrip_client',
+                executable='nmea_init.py'
           )
       ])

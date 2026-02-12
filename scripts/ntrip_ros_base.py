@@ -97,8 +97,8 @@ class NTRIPRosBase(Node):
       self.get_logger().error('Unable to connect')
       return False
     # Setup our subscribers
-    self._nmea_sub = self.create_subscription(Sentence, 'nmea', self.subscribe_nmea, 10)
-    self._fix_sub = self.create_subscription(NavSatFix, 'fix', self.subscribe_fix, 10)
+    self._nmea_sub = self.create_subscription(Sentence, '/ntrip_nmea', self.subscribe_nmea, 10)
+    self._fix_sub = self.create_subscription(NavSatFix, '/ublox_gps_node/fix', self.subscribe_fix, 10)
 
     # Start the timer that will check for RTCM data
     self._rtcm_timer = self.create_timer(0.1, self.publish_rtcm)
