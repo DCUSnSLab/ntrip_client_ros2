@@ -84,9 +84,4 @@ def generate_launch_description():
                 #  ("nmea", "/gx5/nmea/sentence")
                 #],
           ),
-
-          Node(
-                package='ntrip_client',
-                executable='nmea_init.py'
-          )
       ])
