@@ -44,6 +44,8 @@ class NTRIPRosBase(Node):
         ('rtcm_frame_id', 'odom'),
         ('nmea_max_length', NMEA_DEFAULT_MAX_LENGTH),
         ('nmea_min_length', NMEA_DEFAULT_MIN_LENGTH),
+        ('nmea_topic', '/ntrip_nmea'),
+        ('fix_topic', '/ublox_gps_node/fix'),
         ('rtcm_message_package', _MAVROS_MSGS_NAME),
         ('reconnect_attempt_max', NTRIPBase.DEFAULT_RECONNECT_ATTEMPT_MAX),
         ('reconnect_attempt_wait_seconds', NTRIPBase.DEFAULT_RECONNECT_ATEMPT_WAIT_SECONDS),
@@ -88,6 +90,8 @@ class NTRIPRosBase(Node):
     # Get some timeout parameters for the NTRIP client
     self._nmea_max_length = self.get_parameter('nmea_max_length').value
     self._nmea_min_length = self.get_parameter('nmea_min_length').value
+    self._nmea_topic = self.get_parameter('nmea_topic').value
+    self._fix_topic = self.get_parameter('fix_topic').value
     self._reconnect_attempt_max = self.get_parameter('reconnect_attempt_max').value
     self._reconnect_attempt_wait_seconds = self.get_parameter('reconnect_attempt_wait_seconds').value
 
@@ -97,8 +101,10 @@ class NTRIPRosBase(Node):
       self.get_logger().error('Unable to connect')
       return False
     # Setup our subscribers
-    self._nmea_sub = self.create_subscription(Sentence, '/ntrip_nmea', self.subscribe_nmea, 10)
-    self._fix_sub = self.create_subscription(NavSatFix, '/ublox_gps_node/fix', self.subscribe_fix, 10)
+    self._nmea_sub = self.create_subscription(Sentence, self._nmea_topic, self.subscribe_nmea, 10)
+    self._fix_sub = self.create_subscription(NavSatFix, self._fix_topic, self.subscribe_fix, 10)
+    self.get_logger().info('Subscribing to NMEA topic {}'.format(self._nmea_topic))
+    self.get_logger().info('Subscribing to fix topic {}'.format(self._fix_topic))
 
     # Start the timer that will check for RTCM data
     self._rtcm_timer = self.create_timer(0.1, self.publish_rtcm)

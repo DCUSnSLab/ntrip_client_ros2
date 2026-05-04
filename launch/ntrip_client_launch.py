@@ -15,13 +15,15 @@ def generate_launch_description():
           DeclareLaunchArgument('mountpoint',            default_value='VRS-RTCM32'),
           DeclareLaunchArgument('ntrip_version',         default_value='None'),
           DeclareLaunchArgument('authenticate',          default_value='True'),
-          DeclareLaunchArgument('username',              default_value='nevlife123'), #nevlife123
+          DeclareLaunchArgument('username',              default_value='junhp1234'), #nevlife123
           DeclareLaunchArgument('password',              default_value='ngii'), #ngii
           DeclareLaunchArgument('ssl',                   default_value='False'),
           DeclareLaunchArgument('cert',                  default_value='None'),
           DeclareLaunchArgument('key',                   default_value='None'),
           DeclareLaunchArgument('ca_cert',               default_value='None'),
           DeclareLaunchArgument('rtcm_message_package',  default_value='rtcm_msgs'),
+          DeclareLaunchArgument('nmea_topic',            default_value='/ntrip_nmea'),
+          DeclareLaunchArgument('fix_topic',             default_value='/navsatfix'),
 
           # Pass an environment variable to the node
           SetEnvironmentVariable(name='NTRIP_CLIENT_DEBUG', value=LaunchConfiguration('debug')),
@@ -67,6 +69,8 @@ def generate_launch_description():
                     # Optional parameters that will allow for longer or shorter NMEA messages. Standard max length for NMEA is 82
                     'nmea_max_length': 128,
                     'nmea_min_length': 3,
+                    'nmea_topic': LaunchConfiguration('nmea_topic'),
+                    'fix_topic': LaunchConfiguration('fix_topic'),
 
                     # Use this parameter to change the type of RTCM message published by the node. Defaults to "mavros_msgs", but we also support "rtcm_msgs"
                     'rtcm_message_package': LaunchConfiguration('rtcm_message_package'),
@@ -79,9 +83,5 @@ def generate_launch_description():
                     'rtcm_timeout_seconds': 4
                   }
                 ],
-                # Uncomment the following section and replace "/gx5/nmea/sentence" with the topic you are sending NMEA on if it is not the one we requested
-                #remappings=[
-                #  ("nmea", "/gx5/nmea/sentence")
-                #],
           ),
       ])
