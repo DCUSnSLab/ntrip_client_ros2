@@ -15,7 +15,7 @@ def generate_launch_description():
           DeclareLaunchArgument('mountpoint',            default_value='VRS-RTCM32'),
           DeclareLaunchArgument('ntrip_version',         default_value='None'),
           DeclareLaunchArgument('authenticate',          default_value='True'),
-          DeclareLaunchArgument('username',              default_value='nevlife123'), #nevlife123
+          DeclareLaunchArgument('username',              default_value='nevlife12'), #nevlife123
           DeclareLaunchArgument('password',              default_value='ngii'), #ngii
           DeclareLaunchArgument('ssl',                   default_value='False'),
           DeclareLaunchArgument('cert',                  default_value='None'),
