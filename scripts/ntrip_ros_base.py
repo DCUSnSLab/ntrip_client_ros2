@@ -49,6 +49,8 @@ class NTRIPRosBase(Node):
         ('rtcm_message_package', _MAVROS_MSGS_NAME),
         ('reconnect_attempt_max', NTRIPBase.DEFAULT_RECONNECT_ATTEMPT_MAX),
         ('reconnect_attempt_wait_seconds', NTRIPBase.DEFAULT_RECONNECT_ATEMPT_WAIT_SECONDS),
+        # GGA from fix_topic goes out at most this often; casters expect one every few seconds
+        ('gga_interval_seconds', 1.0),
       ]
     )
 
@@ -94,6 +96,8 @@ class NTRIPRosBase(Node):
     self._fix_topic = self.get_parameter('fix_topic').value
     self._reconnect_attempt_max = self.get_parameter('reconnect_attempt_max').value
     self._reconnect_attempt_wait_seconds = self.get_parameter('reconnect_attempt_wait_seconds').value
+    self._gga_interval_seconds = self.get_parameter('gga_interval_seconds').value
+    self._last_gga_seconds = None
 
   def run(self):
     # Connect the client
@@ -125,9 +129,17 @@ class NTRIPRosBase(Node):
     self._client.send_nmea(nmea.sentence)
   
   def subscribe_fix(self, fix: NavSatFix):
-    # Calculate the timestamp of the message
+    # Without a position the caster cannot place a virtual reference station
+    if fix.status.status == NavSatStatus.STATUS_NO_FIX:
+      return
+    now = self.get_clock().now().nanoseconds * 1e-9
+    if self._last_gga_seconds is not None and now - self._last_gga_seconds < self._gga_interval_seconds:
+      return
+    self._last_gga_seconds = now
+
+    # Calculate the timestamp of the message; GGA carries UTC, not the local time zone
     timestamp_secs = fix.header.stamp.sec + fix.header.stamp.nanosec * 1e-9
-    timestamp = datetime.datetime.fromtimestamp(timestamp_secs)
+    timestamp = datetime.datetime.fromtimestamp(timestamp_secs, tz=datetime.timezone.utc)
     time = timestamp.time()
     hour = time.hour
     minute = time.minute
@@ -161,7 +173,8 @@ class NTRIPRosBase(Node):
     # Assemble the sentence
     nmea_sentence_no_checksum = f"$GPGGA,{nmea_utc},{nmea_lat},{nmea_lat_direction},{nmea_lon},{nmea_lon_direction},{nmea_status},05,1.0,100.0,M,-32.0,M,,0000"
     nmea_checksum = NMEAParser.checksum(nmea_sentence_no_checksum)
-    nmea_sentence = f"{nmea_sentence_no_checksum}*{nmea_checksum:x}\r\n"
+    # NMEA wants the checksum as two uppercase hex digits
+    nmea_sentence = f"{nmea_sentence_no_checksum}*{nmea_checksum:02X}\r\n"
 
     # Send the sentence to the client
     self._client.send_nmea(nmea_sentence)
